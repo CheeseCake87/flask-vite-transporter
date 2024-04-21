@@ -28,9 +28,9 @@ quart = ["quart"]
 vt = "vite_transporter:_cli"
 
 [tool.pyqwe]
-vite = "*(app_vite_demo):npm start"
-flask = "app_flask_demo:run"
-quart = "app_quart_demo:run"
+vite = "*(app_vite_demo):npx vite --host 127.0.0.1 --port 5003"
+flask = "*:flask --app app_flask_demo run --host 127.0.0.1 --port 5001 --debug"
+quart = "*:quart --app app_quart_demo run --host 127.0.0.1 --port 5002"
 install = "*:flit install --symlink"
 build = "*:flit build"
 publish = "*shell:export FLIT_USERNAME=__token__ && flit publish"
