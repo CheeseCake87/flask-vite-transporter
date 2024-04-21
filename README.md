@@ -27,7 +27,7 @@ apps listed in the `vite_app_dirs` list to the serving app listed in the `serve_
 npm_exec = "npm"
 npx_exec = "npx"
 serve_app = "app_flask_demo"
-vite_app_dirs = ["app_vite_demo"]
+vite_apps = ["app_vite_demo"]
 ```
 
 The compiling of the Vite apps requires the `npx` and `npm` to be
@@ -142,13 +142,12 @@ def create_app():
 Setting:
 
 ```python
-ViteTransporter(app, cors_allow_all=True)
+ViteTransporter(app, cors_allowed_hosts=["http://127.0.0.1:5003"])
 ```
 
-or setting the environment variable
-`VT_CORS_ALLOW_ALL=True` will allow all origins to access the serving app.
+This is to allow the Vite app to communicate with the app.
 
-This is to allow the Vite app to communicate with the Flask app during development.
+**Note:** It's recommended to remove this in production.
 
 ## Running the demos
 
@@ -185,5 +184,5 @@ Visit the vite app from the link in the terminal. Change something, save, then i
 vt compile
 ```
 
-The Vite app will be compiled, and the files will be moved to the Flask app. 
+The Vite app will be compiled, and the files will be moved to the Flask app.
 Visiting the Flask app from the link in terminal 1 should show the changes.
