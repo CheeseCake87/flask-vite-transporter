@@ -12,28 +12,29 @@ else:
     raise ImportError("Quart is not installed.")
 
 from vite_transporter._html_tags import BodyContent, ScriptTag, LinkTag
+from vite_transporter._headers import http_headers
 
 
 class ViteTransporter:
     app: t.Optional[Quart]
     vt_root_path: Path
 
-    cors_allow_all: bool
+    cors_allowed_hosts: list = None
 
     def __init__(
-        self, app: t.Optional[Quart] = None, cors_allow_all: t.Optional[bool] = None
+            self, app: t.Optional[Quart] = None, cors_allowed_hosts: t.Optional[list] = None
     ) -> None:
         if app is not None:
-            self.init_app(app, cors_allow_all)
+            self.init_app(app, cors_allowed_hosts)
 
-    def init_app(self, app: Quart, cors_allow_all: t.Optional[bool] = None) -> None:
+    def init_app(self, app: Quart, cors_allowed_hosts: t.Optional[list] = None) -> None:
         if app is None:
             raise ImportError("No app was passed in.")
         if not isinstance(app, Quart):
             raise TypeError("The app that was passed in is not an instance of Quart")
 
         self.app = app
-        self.cors_allow_all = cors_allow_all or os.getenv("VT_CORS_ALLOW_ALL", False)
+        self.cors_allowed_hosts = cors_allowed_hosts
 
         if "vite_transporter" in self.app.extensions:
             raise ImportError(
@@ -55,7 +56,7 @@ class ViteTransporter:
 
         self._load_routes(app)
         self._load_context_processor(app)
-        self._load_cors_headers(app, cors_allow_all=self.cors_allow_all)
+        self._load_cors_headers(app, cors_allowed_hosts=self.cors_allowed_hosts)
 
     def _load_routes(self, app: Quart) -> None:
         @app.route("/__vt/<vite_app>/<filename>")
@@ -100,28 +101,28 @@ class ViteTransporter:
         @app.context_processor
         async def vt_body_processor():
             def vt_body(
-                root_id: str = "root",
-                noscript_message: str = "You need to enable JavaScript to run this app.",
+                    root_id: str = "root",
+                    noscript_message: str = "You need to enable JavaScript to run this app.",
             ) -> t.Any:
                 return BodyContent(root_id, noscript_message)()
 
             return dict(vt_body=vt_body)
 
     @staticmethod
-    def _load_cors_headers(app: Quart, cors_allow_all: bool = False) -> None:
-        if cors_allow_all:
+    def _load_cors_headers(app: Quart, cors_allowed_hosts: t.Optional[list] = None) -> None:
+        if cors_allowed_hosts:
             print(
-                f"{Colr.WARNING}{Colr.BOLD}vite-transporter is disabling CORS restrictions."
+                f"\n\r{Colr.WARNING}{Colr.BOLD}vite-transporter is disabling CORS restrictions for:"
                 f"{Colr.END}{Colr.END}\n\r"
-                f"{Colr.OKCYAN}Access-Control-Allow-Origin set to '*' {Colr.END}\n\r"
-                f"{Colr.OKCYAN}Access-Control-Allow-Headers set to '*' {Colr.END}\n\r"
-                f"{Colr.OKCYAN}Access-Control-Allow-Methods set to '*' {Colr.END}\n\r"
-                f"{Colr.WARNING}{Colr.BOLD}Remember to disable this in production!{Colr.END}{Colr.END}"
+                f"{Colr.OKCYAN}{", ".join(cors_allowed_hosts)}{Colr.END}\n\r"
             )
 
             @app.after_request
             async def after_request(response):
-                response.headers["Access-Control-Allow-Origin"] = "*"
-                response.headers["Access-Control-Allow-Headers"] = "*"
+                response.headers["Access-Control-Allow-Origin"] = ", ".join(cors_allowed_hosts)
+                response.headers["Access-Control-Allow-Headers"] = ", ".join(
+                    http_headers
+                )
                 response.headers["Access-Control-Allow-Methods"] = "*"
-                return await response
+                response.headers["Access-Control-Allow-Credentials"] = "true"
+                return response
