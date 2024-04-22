@@ -112,7 +112,7 @@ class ViteTransporter:
             print(
                 f"\n\r{Colr.WARNING}{Colr.BOLD}vite-transporter is disabling CORS restrictions for:"
                 f"{Colr.END}{Colr.END}\n\r"
-                f"{Colr.OKCYAN}{", ".join(cors_allowed_hosts)}{Colr.END}\n\r"
+                f"{Colr.OKCYAN}{', '.join(cors_allowed_hosts)}{Colr.END}\n\r"
             )
 
             @app.after_request
