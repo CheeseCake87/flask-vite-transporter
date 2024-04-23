@@ -5,7 +5,7 @@ from .helpers import PyProjectConfig as _PyProjectConfig
 from .helpers import _compile
 from .parser import ArgumentParser as _ArgumentParser
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 
 def _cli():
