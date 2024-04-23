@@ -12,7 +12,7 @@ pip install vite-transporter
 - Quart
 
 **Note (Flask/Quart):** When including credentials in fetch requests in the vite app.
-You must visit the serve app add first to set the credentials.
+You must visit the serve app first to set the credentials.
 
 For example, if the serve app is running on `http://127.0.0.1:5001`, you must visit this address first.
 
