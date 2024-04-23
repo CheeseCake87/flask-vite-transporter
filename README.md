@@ -11,6 +11,13 @@ pip install vite-transporter
 - Flask
 - Quart
 
+**Note (Flask/Quart):** When including credentials in fetch requests in the vite app.
+You must visit the serve app add first to set the credentials.
+
+For example, if the serve app is running on `http://127.0.0.1:5001`, you must visit this address first.
+
+This won't be needed in production, as it's expected that the Vite app will be served from the same domain.
+
 ## How it works
 
 ### The pyproject.toml file
