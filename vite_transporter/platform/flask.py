@@ -46,9 +46,11 @@ class ViteTransporter:
         self.vt_root_path = Path(app.root_path) / "vt"
 
         if not self.vt_root_path.exists():
-            raise FileNotFoundError(
-                "vt directory not found in the flask app root directory."
+            print(
+                f"{Colr.WARNING}{Colr.BOLD}vt folder not found, a new one was created.{Colr.END}{Colr.END}\n\r"
+                f"{Colr.OKCYAN}{self.vt_root_path}{Colr.END}\n\r"
             )
+            self.vt_root_path.mkdir()
 
         for folder in self.vt_root_path.iterdir():
             if folder.is_dir():
