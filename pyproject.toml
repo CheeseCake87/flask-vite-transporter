@@ -25,7 +25,7 @@ flask = ["flask"]
 quart = ["quart"]
 
 [project.scripts]
-vt = "vite_transporter:_cli"
+vt = "vite_transporter:cli_entry"
 
 [tool.pyqwe]
 vite = "*(app_vite_demo):npx vite --host 127.0.0.1 --port 5003"

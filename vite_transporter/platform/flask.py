@@ -8,9 +8,9 @@ if "flask" in sys.modules:
 else:
     raise ImportError("Flask is not installed.")
 
-from vite_transporter._html_tags import BodyContent, ScriptTag, LinkTag
-from vite_transporter.helpers import Colr
-from vite_transporter._headers import http_headers
+from vite_transporter.utilities import BodyContent, ScriptTag, LinkTag
+from vite_transporter.utilities import Colr
+from vite_transporter.utilities import http_headers
 
 
 class ViteTransporter:
@@ -20,7 +20,7 @@ class ViteTransporter:
     cors_allowed_hosts: list = None
 
     def __init__(
-            self, app: t.Optional[Flask] = None, cors_allowed_hosts: t.Optional[list] = None
+        self, app: t.Optional[Flask] = None, cors_allowed_hosts: t.Optional[list] = None
     ) -> None:
         if app is not None:
             self.init_app(app, cors_allowed_hosts)
@@ -101,15 +101,17 @@ class ViteTransporter:
         @app.context_processor
         def vt_body_processor():
             def vt_body(
-                    root_id: str = "root",
-                    noscript_message: str = "You need to enable JavaScript to run this app.",
+                root_id: str = "root",
+                noscript_message: str = "You need to enable JavaScript to run this app.",
             ) -> t.Any:
                 return BodyContent(root_id, noscript_message)()
 
             return dict(vt_body=vt_body)
 
     @staticmethod
-    def _load_cors_headers(app: Flask, cors_allowed_hosts: t.Optional[list] = None) -> None:
+    def _load_cors_headers(
+        app: Flask, cors_allowed_hosts: t.Optional[list] = None
+    ) -> None:
         if cors_allowed_hosts:
             print(
                 f"\n\r{Colr.WARNING}{Colr.BOLD}vite-transporter is disabling CORS restrictions for:"
@@ -119,7 +121,9 @@ class ViteTransporter:
 
             @app.after_request
             def after_request(response):
-                response.headers["Access-Control-Allow-Origin"] = ", ".join(cors_allowed_hosts)
+                response.headers["Access-Control-Allow-Origin"] = ", ".join(
+                    cors_allowed_hosts
+                )
                 response.headers["Access-Control-Allow-Headers"] = ", ".join(
                     http_headers
                 )
