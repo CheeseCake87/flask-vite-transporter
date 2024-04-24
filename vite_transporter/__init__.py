@@ -5,35 +5,40 @@ from .utilities import Colr as _Colr
 from .utilities import PyProjectConfig as _PyProjectConfig
 from .utilities import compiler
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 
-def setup_subparsers(pars):
-    subparsers = pars.add_subparsers()
+def setup_subparsers(parser):
+    subparsers = parser.add_subparsers()
 
-    subparsers.add_parser("compile").set_defaults(compile=False).add_argument(
-        "-y", action="store_true"
-    )
-    subparsers.add_parser("list").set_defaults(list=False)
-    subparsers.add_parser("ls").set_defaults(list=False)
+    _compile = subparsers.add_parser("compile")
+    _compile.set_defaults(compile=False)
+    _compile.add_argument("-y", action="store_true")
+
+    _list = subparsers.add_parser("list")
+    _list.set_defaults(list=False)
+    _ls = subparsers.add_parser("ls")
+    _ls.set_defaults(ls=False)
 
 
-def load_vite_apps(pyproject):
-    for vite_app in pyproject.vite_apps:
-        pyproject.vite_apps.append(
+def load_vite_apps(pyproject_config):
+    vite_apps = []
+    for vite_app in pyproject_config.vite_apps:
+        vite_apps.append(
             {
                 "vite_app": vite_app,
-                "serve_app": pyproject.vt_config.get("serve_app"),
+                "serve_app": pyproject_config.vt_config.get("serve_app"),
             }
         )
+    return vite_apps
 
 
-def list_ls(pars):
+def list_ls(vite_apps_found):
     print("")
-    if not pars.vite_apps:
+    if not vite_apps_found:
         print(f" {_Colr.WARNING}No vite apps found in pyproject.toml{_Colr.END}")
     else:
-        for app in pars.vite_apps:
+        for app in vite_apps_found:
             print(
                 f"{_Colr.OKGREEN}{app.get('vite_app')}/dist/assets{_Colr.END} "
                 f"{_Colr.BOLD}=>{_Colr.END} "
@@ -43,36 +48,33 @@ def list_ls(pars):
     sys.exit(0)
 
 
-def compile_(pyproject, pars, args):
+def compile_(pyproject_config, vite_apps_found, parsed_args):
     compiler(
-        pyproject,
-        pars.vite_apps,
-        replace=True if hasattr(args, "y") and args.y else False,
+        pyproject_config,
+        vite_apps_found,
+        replace=True if hasattr(parsed_args, "y") and parsed_args.y else False,
     )
     sys.exit(0)
 
 
 def cli_entry():
-    pars = _ArgumentParser(prog="vtf", add_help=False)
-    pars.add_argument(
+    parser = _ArgumentParser(prog="vtf", add_help=False)
+    parser.add_argument(
         "--version", "-v", action="version", version=f"vite-to-flask {__version__}"
     )
-    pars.add_argument("--help", "-h", action="help")
+    parser.add_argument("--help", "-h", action="help")
 
-    setup_subparsers(pars)
+    setup_subparsers(parser)
 
-    with _PyProjectConfig() as pyproject:
-        pypro: _PyProjectConfig = pyproject
+    with _PyProjectConfig() as pyproject_config:
+        vite_apps_found = load_vite_apps(pyproject_config)
+        parsed_args = parser.parse_args()
 
-        load_vite_apps(pypro)
+        if hasattr(parsed_args, "compile"):
+            compile_(pyproject_config, vite_apps_found, parsed_args)
 
-        args = pars.parse_args()
-
-        if hasattr(args, "compile"):
-            compile_(pypro, pars, args)
-
-        if hasattr(args, "list") or hasattr(args, "ls"):
-            list_ls(pars)
+        if hasattr(parsed_args, "list") or hasattr(parsed_args, "ls"):
+            list_ls(vite_apps_found)
 
     # print help if no command is given
-    pars.print_help()
+    parser.print_help()

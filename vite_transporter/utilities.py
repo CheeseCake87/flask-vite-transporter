@@ -111,11 +111,10 @@ class NPMCommander:
         subprocess.run([self.npm_binary, *shlex.split(command)], cwd=self.workdir)
 
 
-def compiler(pypro: PyProjectConfig, vite_apps: list[dict], replace: bool = False):
-    pc: PyProjectConfig = pypro
+def compiler(pyproject_config: PyProjectConfig, vite_apps_found: list[dict], replace: bool = False):
 
     print("Compiling Vite apps...")
-    vt_dir = pc.cwd / pc.serve_app / "vt"
+    vt_dir = pyproject_config.cwd / pyproject_config.serve_app / "vt"
 
     # Delete contents of vt_dir
     if vt_dir.exists():
@@ -143,8 +142,8 @@ def compiler(pypro: PyProjectConfig, vite_apps: list[dict], replace: bool = Fals
         vt_dir.mkdir()
 
     # Create directories for vite apps
-    for app in vite_apps:
-        va_path = pc.cwd / app.get("vite_app")
+    for app in vite_apps_found:
+        va_path = pyproject_config.cwd / app.get("vite_app")
         va_node_modules = va_path / "node_modules"
         va_dist = va_path / "dist"
         va_assets = va_dist / "assets"
@@ -155,10 +154,10 @@ def compiler(pypro: PyProjectConfig, vite_apps: list[dict], replace: bool = Fals
             va_vt_path.mkdir()
 
         if not va_node_modules.exists():
-            with NPMCommander(va_path, pc.npm_exec) as npm:
+            with NPMCommander(va_path, pyproject_config.npm_exec) as npm:
                 npm.run("install")
 
-        with NPXCommander(va_path, pc.npx_exec) as npx:
+        with NPXCommander(va_path, pyproject_config.npx_exec) as npx:
             npx.run("vite build --mode production")
 
         for item in va_assets.iterdir():
