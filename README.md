@@ -67,10 +67,12 @@ vt compile
 ```
 
 The Vite apps are compiled into a `dist` folder, the files contained
-in this folder are then moved to a folder called `vt` in the serving app.
+in this folder are then moved to a folder called `vite` in the serving app.
 
 Any js file that is compiled that contains an asset reference will
-replace `assets/` with `/__vt/{app_name}`.
+replace `assets/` with `/--vite--/{app_name}`.
+
+This requires that all assets in the Vite app stay in the `assets` folder.
 
 ## Working with vite-transporter using Flask / Quart
 
@@ -111,7 +113,7 @@ vt_body(
 ```python
 from flask import Flask, render_template
 
-from vite_transporter.platform.flask import ViteTransporter
+from vite_transporter.flask import ViteTransporter
 
 
 def create_app():
@@ -130,7 +132,7 @@ def create_app():
 ```python
 from quart import Quart, render_template
 
-from vite_transporter.platform.quart import ViteTransporter
+from vite_transporter.quart import ViteTransporter
 
 
 def create_app():
@@ -162,7 +164,7 @@ We will be using a package call `pyqwe` to run commands from the pyproject file.
 Installing the development requirements will install `pyqwe`:
 
 ```bash
-pip install -r requirements/development.txt
+pip install -r requirements/tests.txt
 ```
 
 Use `pyqwe` to install the local version of vite-transporter:
@@ -171,13 +173,15 @@ Use `pyqwe` to install the local version of vite-transporter:
 pyqwe install
 ```
 
-`serve_app` is currently set to use the Flask demo app.
+The `serve_app` under `tool.vite_transporter` is currently set to use the Flask demo app.
 
 We will run this in terminal 1:
 
 ```bash
 pyqwe flask
 ```
+
+You should be able to visit the Flask app from the link in the terminal, and see the current Vite app.
 
 Next, we will run the Vite app in terminal 2:
 
