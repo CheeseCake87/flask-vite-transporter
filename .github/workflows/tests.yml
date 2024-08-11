@@ -47,8 +47,8 @@ jobs:
           python -m pip install -r requirements/tests.txt
           python -m pip install -r requirements/build.txt
       - name: Install Node.js dependencies
+        working-directory: frontend
         run: |
-          cd frontend
           npm install
       - name: Install package
         run: |
