@@ -12,7 +12,7 @@ class ArgumentParser(argparse.ArgumentParser):
     def print_help(self, file: t.Optional[t.IO[str]] = None) -> None:
         print(
             "\n\r"
-            "Usage: vtf <option>"
+            "Usage: vt <option>"
             "\n\r\n\r"
             f" {Sprinkles.OKCYAN}list, ls{Sprinkles.END} => List all vite apps in pyproject.toml"
             "\n\r"

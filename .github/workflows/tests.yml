@@ -54,6 +54,5 @@ jobs:
         run: |
           flit install
       - name: Test with pytest
-        working-directory: /home/runner/work/vite-transporter/vite-transporter/
         run: |
           pytest

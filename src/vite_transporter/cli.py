@@ -9,9 +9,9 @@ from .utilities import subparsers
 def cli() -> None:
     from . import __version__
 
-    parser = ArgumentParser(prog="vtf", add_help=False)
+    parser = ArgumentParser(prog="vt", add_help=False)
     parser.add_argument(
-        "--version", "-v", action="version", version=f"vite-to-flask {__version__}"
+        "--version", "-v", action="version", version=f"vite-transporter {__version__}"
     )
     parser.add_argument("--help", "-h", action="help")
 
@@ -26,5 +26,3 @@ def cli() -> None:
 
         if hasattr(parsed_args, "list") or hasattr(parsed_args, "ls"):
             list_vite_apps(vite_apps_found)
-
-    parser.print_help()
