@@ -9,25 +9,16 @@ from .pyproject_config import PyProjectConfig
 from .sprinkles import Sprinkles
 
 
-class TestDummy:
-    y: bool = True
-
-
 def compile_vite_apps(
     pyproject_config: PyProjectConfig,
     vite_apps_found: t.List[t.Dict[str, t.Any]],
-    parsed_args: t.Union[Namespace, TestDummy],
-) -> bool:
-    try:
-        compiler(
-            pyproject_config,
-            vite_apps_found,
-            replace=True if hasattr(parsed_args, "y") and parsed_args.y else False,
-        )
-        return True
-    except Exception as e:
-        print(e)
-        return False
+    parsed_args: Namespace,
+) -> None:
+    compiler(
+        pyproject_config,
+        vite_apps_found,
+        replace=True if hasattr(parsed_args, "y") and parsed_args.y else False,
+    )
 
 
 def compiler(
@@ -70,6 +61,9 @@ def compiler(
 
         va_vt_path = vt_dir / app.get("vite_app", "")
 
+        if va_dist.exists() and va_dist.is_dir():
+            shutil.rmtree(va_dist)
+
         if not va_vt_path.exists():
             va_vt_path.mkdir()
 
@@ -93,7 +87,5 @@ def compiler(
                     )
             else:
                 shutil.copy(item, va_vt_path / item.name)
-
-        shutil.rmtree(va_dist)
 
     print("Compilation complete.")
