@@ -36,9 +36,7 @@ class ViteTransporter:
             raise TypeError("The app that was passed in is not an instance of Flask")
 
         self.app = app
-
-        if cors_allowed_hosts is not None:
-            self.cors_allowed_hosts = cors_allowed_hosts
+        self.cors_allowed_hosts = cors_allowed_hosts
 
         if "vite_transporter" in self.app.extensions:
             raise ImportError(
