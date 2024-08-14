@@ -7,7 +7,7 @@ from vite_transporter.globals import HTTP_HEADERS
 from vite_transporter.utilities import Sprinkles
 
 if "flask" in sys.modules:
-    from flask import Flask, url_for, send_from_directory, Response
+    from flask import Flask, url_for, Response, Blueprint
     from markupsafe import Markup
 else:
     raise ImportError("Flask is not installed.")
@@ -58,14 +58,20 @@ class ViteTransporter:
             if folder.is_dir():
                 self.app.config["VTF_APPS"].update({folder.name: folder})
 
-        self._load_routes(app)
+        self._load_blueprint(app)
         self._load_context_processor(app)
         self._load_cors_headers(app, self.cors_allowed_hosts)
 
-    def _load_routes(self, app: Flask) -> None:
-        @app.route("/--vite--/<vite_app>/<filename>")
-        def __vite__(vite_app: str, filename: str) -> Response:
-            return send_from_directory(self.vt_root_path / vite_app, filename)
+    def _load_blueprint(self, app: Flask) -> None:
+        app.register_blueprint(
+            Blueprint(
+                "__vite__",
+                __name__,
+                url_prefix="/--vite--",
+                static_folder=f"{app.root_path}/vite",
+                static_url_path="/",
+            )
+        )
 
     @staticmethod
     def _load_context_processor(app: Flask) -> None:
@@ -82,7 +88,7 @@ class ViteTransporter:
                     tags.append(
                         ScriptTag(
                             src=url_for(
-                                "__vite__", vite_app=vite_app, filename=file.name
+                                "__vite__.static", filename=f"{vite_app}/{file.name}"
                             ),
                             type_="module",
                         )
@@ -93,7 +99,7 @@ class ViteTransporter:
                         LinkTag(
                             rel="stylesheet",
                             href=url_for(
-                                "__vite__", vite_app=vite_app, filename=file.name
+                                "__vite__.static", filename=f"{vite_app}/{file.name}"
                             ),
                         )
                     )

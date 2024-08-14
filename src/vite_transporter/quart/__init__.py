@@ -8,7 +8,7 @@ from vite_transporter.utilities import Sprinkles
 
 if "quart" in sys.modules:
     from markupsafe import Markup
-    from quart import Quart, url_for, send_from_directory, Response
+    from quart import Quart, url_for, Response, Blueprint
 else:
     raise ImportError("Quart is not installed.")
 
@@ -62,10 +62,16 @@ class ViteTransporter:
         self._load_context_processor(app)
         self._load_cors_headers(app, cors_allowed_hosts=self.cors_allowed_hosts)
 
-    def _load_routes(self, app: Quart) -> None:
-        @app.route("/--vite--/<vite_app>/<filename>")
-        async def __vite__(vite_app: str, filename: str) -> Response:
-            return await send_from_directory(self.vt_root_path / vite_app, filename)
+    def _load_blueprint(self, app: Quart) -> None:
+        app.register_blueprint(
+            Blueprint(
+                "__vite__",
+                __name__,
+                url_prefix="/--vite--",
+                static_folder=f"{app.root_path}/vite",
+                static_url_path="/",
+            )
+        )
 
     @staticmethod
     def _load_context_processor(app: Quart) -> None:

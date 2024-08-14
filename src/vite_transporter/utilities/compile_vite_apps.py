@@ -9,9 +9,9 @@ from .sprinkles import Sprinkles
 
 
 def compile_vite_apps(
-        pyproject_config: PyProjectConfig,
-        vite_apps_found: t.List[t.Dict[str, t.Any]],
-        parsed_args: Namespace,
+    pyproject_config: PyProjectConfig,
+    vite_apps_found: t.List[t.Dict[str, t.Any]],
+    parsed_args: Namespace,
 ) -> None:
     compiler(
         pyproject_config,
@@ -21,9 +21,9 @@ def compile_vite_apps(
 
 
 def compiler(
-        pyproject_config: PyProjectConfig,
-        vite_apps_found: t.List[t.Dict[str, t.Any]],
-        replace: bool = False,
+    pyproject_config: PyProjectConfig,
+    vite_apps_found: t.List[t.Dict[str, t.Any]],
+    replace: bool = False,
 ) -> None:
     print("Compiling Vite apps...")
     vt_dir = pyproject_config.cwd / pyproject_config.serve_app / "vite"
@@ -69,7 +69,10 @@ def compiler(
         if not va_node_modules.exists():
             subprocess.run([pyproject_config.npm_exec, "install"], cwd=va_path)
 
-        subprocess.run([pyproject_config.npx_exec, "vite", "build", "--mode", "production"], cwd=va_path)
+        subprocess.run(
+            [pyproject_config.npx_exec, "vite", "build", "--mode", "production"],
+            cwd=va_path,
+        )
 
         for item in va_assets.iterdir():
             print(
