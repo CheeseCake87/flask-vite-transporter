@@ -85,6 +85,12 @@ def compiler(
                     f.write(
                         content.replace("assets/", f"--vite--/{app.get('vite_app')}/")
                     )
+            elif item.suffix == ".css":
+                with open(va_vt_path / item.name, "w") as f:
+                    content = item.read_text()
+                    f.write(
+                        content.replace("assets/", f"--vite--/{app.get('vite_app')}/")
+                    )
             else:
                 shutil.copy(item, va_vt_path / item.name)
 
