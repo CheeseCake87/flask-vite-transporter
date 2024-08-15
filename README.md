@@ -37,7 +37,7 @@ serve_app = "app_flask_demo"
 vite_apps = ["app_vite_demo"]
 ```
 
-The compiling of the Vite apps requires the `npx` and `npm` to be
+The compiling of the Vite apps requires the `npx` and `npm` be
 available. You can use absolute paths here.
 
 `npm_exec` is used to run `npm install` if your Vite app does not
@@ -63,8 +63,26 @@ vt list
 ### Compiling the Vite apps
 
 ```bash
-vt compile
+vt pack
 ```
+
+This will create a `dist` folder in each Vite app directory with the compiled files.
+
+### Transporting the Vite apps
+
+```bash
+vt transport
+```
+
+This will move the compiled files to the serving app.
+
+You can also run the `pack` and `transport` commands together:
+
+```bash
+vt pack transport
+```
+
+### What happens
 
 The Vite apps are compiled into a `dist` folder, the files contained
 in this folder are then moved to a folder called `vite` in the serving app.
@@ -72,7 +90,34 @@ in this folder are then moved to a folder called `vite` in the serving app.
 Any js file that is compiled that contains an asset reference will
 replace `assets/` with `/--vite--/{app_name}`.
 
-This requires that all assets in the Vite app stay in the `assets` folder.
+This requires that all assets in the Vite app stay in the `assets` folder, and are imported in the
+frontend project in a way that the Vite compile stage can find them.
+
+### Modes
+
+The Vite apps can be compiled in different modes:
+
+- `development`
+- `production`
+- `staging`
+
+This is done by running the following command:
+
+```bash
+vt pack production
+# or
+vt pack development
+```
+
+An example of `pack` and `transport` together:
+
+```bash
+vt pack staging transport
+# or
+vt pack transport staging
+```
+
+These modes values are accessible via `import.meta.env.MODE` in the Vite app.
 
 ## Working with vite-transporter using Flask / Quart
 
@@ -192,7 +237,7 @@ pyqwe vite
 Visit the vite app from the link in the terminal. Change something, save, then in terminal 3 run:
 
 ```bash
-vt compile
+vt pack transport
 ```
 
 The Vite app will be compiled, and the files will be moved to the Flask app.
