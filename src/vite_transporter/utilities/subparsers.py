@@ -7,6 +7,7 @@ def subparsers(parser: ArgumentParser) -> None:
     compile_ = subparser.add_parser("compile")
     compile_.set_defaults(compile=False)
     compile_.add_argument("-y", action="store_true")
+    compile_.add_argument("--development", action="store_true")
 
     list_ = subparser.add_parser("list")
     list_.set_defaults(list=False)
