@@ -97,27 +97,21 @@ frontend project in a way that the Vite compile stage can find them.
 
 The Vite apps can be compiled in different modes:
 
-- `development`
-- `production`
-- `staging`
-
-This is done by running the following command:
-
 ```bash
-vt pack production
+vt pack -m development
 # or
-vt pack development
+vt pack -m your-named-mode
 ```
 
 An example of `pack` and `transport` together:
 
 ```bash
-vt pack staging transport
+vt pack -m dev transport
 # or
-vt pack transport staging
+vt pack transport -m dev
 ```
 
-These modes values are accessible via `import.meta.env.MODE` in the Vite app.
+These mode values are accessible via `import.meta.env.MODE` in the Vite app.
 
 ## Working with vite-transporter using Flask / Quart
 

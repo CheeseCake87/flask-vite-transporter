@@ -19,14 +19,8 @@ def update_vite_apps(
 def pack_vite_apps(
     pyproject_config: PyProjectConfig,
     vite_apps_found: t.List[t.Dict[str, t.Any]],
-    arg_list: list[str],
+    mode: str = "production",
 ) -> None:
-    mode = "production"
-    if "staging" in arg_list:
-        mode = "staging"
-    elif "development" in arg_list:
-        mode = "development"
-
     packer(pyproject_config, vite_apps_found, mode=mode)
 
 
