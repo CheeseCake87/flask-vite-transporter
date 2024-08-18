@@ -56,8 +56,6 @@ def cli() -> None:
             print_help()
             sys.exit(1)
 
-        print(arg)
-
     with PyProjectConfig() as pyproject_config:
         vite_apps_found = load_vite_apps(pyproject_config)
 
