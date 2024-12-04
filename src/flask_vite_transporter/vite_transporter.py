@@ -1,16 +1,11 @@
-import sys
 import typing as t
 from pathlib import Path
 
-from vite_transporter.elements import BodyContent, ScriptTag, LinkTag
-from vite_transporter.globals import HTTP_HEADERS
-from vite_transporter.utilities import Sprinkles
-
-if "flask" in sys.modules:
-    from flask import Flask, url_for, Response, Blueprint
-    from markupsafe import Markup
-else:
-    raise ImportError("Flask is not installed.")
+from flask import Flask, url_for, Response, Blueprint
+from flask_vite_transporter.elements import BodyContent, ScriptTag, LinkTag
+from flask_vite_transporter.globals import HTTP_HEADERS
+from flask_vite_transporter.utilities import Sprinkles
+from markupsafe import Markup
 
 
 class ViteTransporter:
@@ -20,15 +15,15 @@ class ViteTransporter:
     cors_allowed_hosts: t.Optional[t.List[str]]
 
     def __init__(
-        self,
-        app: t.Optional[Flask] = None,
-        cors_allowed_hosts: t.Optional[t.List[str]] = None,
+            self,
+            app: t.Optional[Flask] = None,
+            cors_allowed_hosts: t.Optional[t.List[str]] = None,
     ) -> None:
         if app is not None:
             self.init_app(app, cors_allowed_hosts)
 
     def init_app(
-        self, app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
+            self, app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
     ) -> None:
         if app is None:
             raise ImportError("No app was passed in.")
@@ -111,8 +106,8 @@ class ViteTransporter:
         @app.context_processor
         def vt_body_processor() -> t.Dict[str, t.Callable[..., t.Any]]:
             def vt_body(
-                root_id: str = "root",
-                noscript_message: str = "You need to enable JavaScript to run this app.",
+                    root_id: str = "root",
+                    noscript_message: str = "You need to enable JavaScript to run this app.",
             ) -> t.Any:
                 return BodyContent(root_id, noscript_message)()
 
@@ -120,7 +115,7 @@ class ViteTransporter:
 
     @staticmethod
     def _load_cors_headers(
-        app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
+            app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
     ) -> None:
         if cors_allowed_hosts:
             print(

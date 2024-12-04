@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from quart import Quart, render_template, session
 
-from vite_transporter.quart import ViteTransporter
+from flask_vite_transporter.quart import ViteTransporter
 
 load_dotenv()
 

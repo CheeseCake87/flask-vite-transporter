@@ -1,15 +1,10 @@
-# 🚚 vite-transporter
+# flask-vite-transporter 🚚
 
-**_Transport Vite apps._**
+Transport Vite apps to Flask (or Quart)
 
 ```bash
-pip install vite-transporter
+pip install flask-vite-transporter
 ```
-
-**Currently compatible with:**
-
-- Flask
-- Quart
 
 **Note (Flask/Quart):** When including credentials in fetch requests in the vite app.
 You must visit the serve app first to set the credentials.
@@ -30,11 +25,11 @@ apps listed in the `vite_app_dirs` list to the serving app listed in the `serve_
 `pyproject.toml`:
 
 ```toml
-[tool.vite_transporter]
+[tool.flask_vite_transporter]
 npm_exec = "npm"
 npx_exec = "npx"
-serve_app = "app_flask_demo"
-vite_apps = ["app_vite_demo"]
+serve_app = "app_flask"
+vite_apps = ["frontend"]
 ```
 
 The compiling of the Vite apps requires the `npx` and `npm` be
@@ -115,8 +110,8 @@ These mode values are accessible via `import.meta.env.MODE` in the Vite app.
 
 ## Working with vite-transporter using Flask / Quart
 
-vite-transporter creates a couple of Flask / Quart context processors that match the Vite apps
-to a Flask / Quart template.
+flask-vite-transporter creates a couple of Flask / Quart context processors 
+that match the Vite apps to a Flask / Quart template.
 
 ### The context processors
 
@@ -152,7 +147,7 @@ vt_body(
 ```python
 from flask import Flask, render_template
 
-from vite_transporter.flask import ViteTransporter
+from flask_vite_transporter import ViteTransporter
 
 
 def create_app():
@@ -171,12 +166,12 @@ def create_app():
 ```python
 from quart import Quart, render_template
 
-from vite_transporter.quart import ViteTransporter
+from flask_vite_transporter.quart import QuartViteTransporter
 
 
 def create_app():
     app = Quart(__name__)
-    ViteTransporter(app)
+    QuartViteTransporter(app)
 
     @app.route("/")
     async def index():
@@ -206,33 +201,26 @@ Installing the development requirements will install `pyqwe`:
 pip install -r requirements/tests.txt
 ```
 
-Use `pyqwe` to install the local version of vite-transporter:
+Use `pyqwe` to install the local version of flask-vite-transporter:
 
 ```bash
 pyqwe install
 ```
 
-The `serve_app` under `tool.vite_transporter` is currently set to use the Flask demo app.
-
-We will run this in terminal 1:
-
-```bash
-pyqwe flask
-```
-
-You should be able to visit the Flask app from the link in the terminal, and see the current Vite app.
-
-Next, we will run the Vite app in terminal 2:
+The `serve_app` under `tool.flask_vite_transporter` is currently set to use 
+the Flask demo app.
 
 ```bash
-pyqwe vite
+pyqwe flask_plus_vite
 ```
 
-Visit the vite app from the link in the terminal. Change something, save, then in terminal 3 run:
+You should be able to visit the Flask app and the Vite app from the link in 
+the terminal. Change something in the Vite app, save, then in a separate 
+terminal run:
 
 ```bash
 vt pack transport
 ```
 
 The Vite app will be compiled, and the files will be moved to the Flask app.
-Visiting the Flask app from the link in terminal 1 should show the changes.
+Visiting the Flask app from the link in the terminal should show the changes.

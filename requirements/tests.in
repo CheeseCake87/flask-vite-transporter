@@ -1,5 +1,5 @@
 python-dotenv
-flask
-quart
+flask==3.1.0
+quart==0.19.9
 pytest
 pyqwe

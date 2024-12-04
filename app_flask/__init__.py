@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from flask import Flask, render_template, session
 
-from vite_transporter.flask import ViteTransporter
+from flask_vite_transporter import ViteTransporter
 
 load_dotenv()
 

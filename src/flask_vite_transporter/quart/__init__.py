@@ -2,9 +2,9 @@ import sys
 import typing as t
 from pathlib import Path
 
-from vite_transporter.elements import BodyContent, ScriptTag, LinkTag
-from vite_transporter.globals import HTTP_HEADERS
-from vite_transporter.utilities import Sprinkles
+from flask_vite_transporter.elements import BodyContent, ScriptTag, LinkTag
+from flask_vite_transporter.globals import HTTP_HEADERS
+from flask_vite_transporter.utilities import Sprinkles
 
 if "quart" in sys.modules:
     from markupsafe import Markup
@@ -13,7 +13,7 @@ else:
     raise ImportError("Quart is not installed.")
 
 
-class ViteTransporter:
+class QuartViteTransporter:
     app: t.Optional[Quart]
     vt_root_path: Path
 

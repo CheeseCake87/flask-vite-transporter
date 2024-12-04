@@ -23,7 +23,7 @@ class PyProjectConfig:
             raise FileNotFoundError("pyproject.toml not found.")
 
         pyproject_raw = loads(str(self.pyproject.read_text()))
-        self.vt_config = pyproject_raw.get("tool", {}).get("vite_transporter", {})
+        self.vt_config = pyproject_raw.get("tool", {}).get("flask_vite_transporter", {})
         self.npm_exec = self.vt_config.get("npm_exec", "npm")
         self.npx_exec = self.vt_config.get("npx_exec", "npx")
         self.serve_app = self.vt_config.get("serve_app", "app")

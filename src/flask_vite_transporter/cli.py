@@ -11,7 +11,7 @@ from .utilities import update_vite_apps
 
 
 def cli() -> None:
-    from . import __version__
+    from importlib.metadata import version
 
     available_commands = [
         "vt",
@@ -83,5 +83,5 @@ def cli() -> None:
             print_help()
 
         if "-v" in arg_list or "--version" in arg_list:
-            print(f"vite-transporter v{__version__}")
+            print(f"flask-vite-transporter v{version('flask-vite-transporter')}")
             sys.exit(0)
