@@ -92,25 +92,24 @@ def transporter(
 ) -> None:
     vt_dir = pyproject_config.cwd / pyproject_config.serve_app / "vite"
 
-    if vt_dir.exists():
-        for item in vt_dir.iterdir():
-            if item.is_dir():
-                shutil.rmtree(item)
-            else:
-                item.unlink()
-
-    else:
-        vt_dir.mkdir()
+    if not vt_dir.exists():
+        vt_dir.mkdir(parents=True)
 
     for app in vite_apps_found:
         va_path = pyproject_config.cwd / app.get("vite_app", "")
         va_dist = va_path / "dist"
         va_assets = va_dist / "assets"
 
-        va_vt_path = vt_dir / app.get("vite_app", "")
+        va_vt_path = vt_dir / app.get("serve_app_path", "")
 
         if not va_vt_path.exists():
             va_vt_path.mkdir(parents=True)
+        else:
+            for item in va_vt_path.iterdir():
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    item.unlink()
 
         print(f"{Sprinkles.OKCYAN}🚚 Transporting to {va_vt_path} ...{Sprinkles.END}")
 
