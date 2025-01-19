@@ -29,7 +29,7 @@ apps listed in the `vite_app_dirs` list to the serving app listed in the `serve_
 npm_exec = "npm"
 npx_exec = "npx"
 serve_app = "app_flask"
-vite_apps = ["frontend"]
+vite_app.frontend = "frontend"
 ```
 
 The compiling of the Vite apps requires the `npx` and `npm` be
@@ -42,10 +42,20 @@ have the `node_modules` folder.
 
 `serve_app` is the app that will serve the Vite compiled files.
 
-`vite_app_dirs` is a list of directories that contain Vite apps.
+`vite_app.<reference>` is vite_app.'reference in the flask app' = 'relative 
+folder of the vite app'
 
-You can send over many Vite apps to the serving app, they will be
-accessible within template files.
+You can send over multiple Vite apps to the serving app, they will be
+accessible within template files using the reference value.
+
+```toml
+[tool.flask_vite_transporter]
+npm_exec = "npm"
+npx_exec = "npx"
+serve_app = "app_flask"
+vite_app.customer_portal = "frontends/customer"
+vite_app.admin_portal = "frontends/admin"
+```
 
 ### List the Vite apps
 
@@ -54,6 +64,8 @@ You can see what apps can be compiled by running:
 ```bash
 vt list
 ```
+
+It will show: `<reference>: <vite app source> => <serve app location>`
 
 ### Compiling the Vite apps
 
@@ -83,7 +95,7 @@ The Vite apps are compiled into a `dist` folder, the files contained
 in this folder are then moved to a folder called `vite` in the serving app.
 
 Any js file that is compiled that contains an asset reference will
-replace `assets/` with `/--vite--/{app_name}`.
+replace `assets/` with `/--vite--/{reference}`.
 
 This requires that all assets in the Vite app stay in the `assets` folder, and are imported in the
 frontend project in a way that the Vite compile stage can find them.
@@ -108,6 +120,24 @@ vt pack transport -m dev
 
 These mode values are accessible via `import.meta.env.MODE` in the Vite app.
 
+### Only
+
+If you have multiple frontends and only want to pack and transport one you 
+can use the `-o` or `--only` flag to do that.
+
+Here's an example:
+
+```toml
+[tool.flask_vite_transporter]
+npm_exec = "npm"
+npx_exec = "npx"
+serve_app = "app_flask"
+vite_app.customer_portal = "frontends/customer"
+vite_app.admin_portal = "frontends/admin"
+```
+
+`vt pack transport --only admin_portal`
+
 ## Working with vite-transporter using Flask / Quart
 
 flask-vite-transporter creates a couple of Flask / Quart context processors 
@@ -131,7 +161,7 @@ that match the Vite apps to a Flask / Quart template.
 
 ```
 vt_head(
-    vite_app_name: str  # The name of the Vite app to load
+    reference: str  # The name of the reference used.
 )
 ```
 
