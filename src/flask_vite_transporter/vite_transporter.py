@@ -8,6 +8,18 @@ from flask_vite_transporter.utilities import Sprinkles
 from markupsafe import Markup
 
 
+def _load_blueprint(app: Flask) -> None:
+    app.register_blueprint(
+        Blueprint(
+            "__vite__",
+            __name__,
+            url_prefix="/--vite--",
+            static_folder=f"{app.root_path}/vite",
+            static_url_path="/",
+        )
+    )
+
+
 class ViteTransporter:
     app: t.Optional[Flask]
     vt_root_path: Path
@@ -15,15 +27,15 @@ class ViteTransporter:
     cors_allowed_hosts: t.Optional[t.List[str]]
 
     def __init__(
-            self,
-            app: t.Optional[Flask] = None,
-            cors_allowed_hosts: t.Optional[t.List[str]] = None,
+        self,
+        app: t.Optional[Flask] = None,
+        cors_allowed_hosts: t.Optional[t.List[str]] = None,
     ) -> None:
         if app is not None:
             self.init_app(app, cors_allowed_hosts)
 
     def init_app(
-            self, app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
+        self, app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
     ) -> None:
         if app is None:
             raise ImportError("No app was passed in.")
@@ -42,6 +54,7 @@ class ViteTransporter:
         self.app.config["VTF_APPS"] = {}
         self.vt_root_path = Path(app.root_path) / "vite"
 
+        # If 'vite' folder is not found in the serve app, create it
         if not self.vt_root_path.exists():
             print(
                 f"{Sprinkles.WARNING}{Sprinkles.BOLD}vt folder not found, a new one was created.{Sprinkles.END}{Sprinkles.END}\n\r"
@@ -49,24 +62,14 @@ class ViteTransporter:
             )
             self.vt_root_path.mkdir()
 
+        # loop over folders found in the 'vite' folder and set them to a lookup table
         for folder in self.vt_root_path.iterdir():
             if folder.is_dir():
                 self.app.config["VTF_APPS"].update({folder.name: folder})
 
-        self._load_blueprint(app)
+        _load_blueprint(app)
         self._load_context_processor(app)
         self._load_cors_headers(app, self.cors_allowed_hosts)
-
-    def _load_blueprint(self, app: Flask) -> None:
-        app.register_blueprint(
-            Blueprint(
-                "__vite__",
-                __name__,
-                url_prefix="/--vite--",
-                static_folder=f"{app.root_path}/vite",
-                static_url_path="/",
-            )
-        )
 
     @staticmethod
     def _load_context_processor(app: Flask) -> None:
@@ -106,8 +109,8 @@ class ViteTransporter:
         @app.context_processor
         def vt_body_processor() -> t.Dict[str, t.Callable[..., t.Any]]:
             def vt_body(
-                    root_id: str = "root",
-                    noscript_message: str = "You need to enable JavaScript to run this app.",
+                root_id: str = "root",
+                noscript_message: str = "You need to enable JavaScript to run this app.",
             ) -> t.Any:
                 return BodyContent(root_id, noscript_message)()
 
@@ -115,7 +118,7 @@ class ViteTransporter:
 
     @staticmethod
     def _load_cors_headers(
-            app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
+        app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
     ) -> None:
         if cors_allowed_hosts:
             print(
