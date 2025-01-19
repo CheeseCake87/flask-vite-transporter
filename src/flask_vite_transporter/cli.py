@@ -41,7 +41,10 @@ def cli() -> None:
             o_index = arg_list.index(arg)
 
             if o_index == 0:
-                print("\n\r" f" {Sprinkles.FAIL}No action was provided before -o or --only flag.{Sprinkles.END}")
+                print(
+                    "\n\r"
+                    f" {Sprinkles.FAIL}No action was provided before -o or --only flag.{Sprinkles.END}"
+                )
                 print_help()
 
             after_o = arg_list[o_index:]
