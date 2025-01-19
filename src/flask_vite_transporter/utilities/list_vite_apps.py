@@ -15,7 +15,7 @@ def list_vite_apps(vite_apps_found: t.List[t.Dict[str, t.Any]]) -> None:
             print(
                 f"{Sprinkles.OKGREEN}{app.get('vite_app')}/dist/assets{Sprinkles.END} "
                 f"{Sprinkles.BOLD}=>{Sprinkles.END} "
-                f"{Sprinkles.OKGREEN}{app.get('serve_app')}/vt/{app.get('vite_app')}/{Sprinkles.END}"
+                f"{Sprinkles.OKGREEN}{app.get('serve_app')}/vite/{app.get('serve_app')}/{Sprinkles.END}"
             )
     print("")
     sys.exit(0)
