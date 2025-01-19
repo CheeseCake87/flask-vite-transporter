@@ -150,7 +150,7 @@ that match the Vite apps to a Flask / Quart template.
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {{ vt_head('app_vite_demo') }}
+    {{ vt_head('frontend') }}
     <title>Test</title>
 </head>
 <body>
