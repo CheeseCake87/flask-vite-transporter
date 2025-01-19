@@ -110,7 +110,7 @@ def transporter(
         va_vt_path = vt_dir / app.get("vite_app", "")
 
         if not va_vt_path.exists():
-            va_vt_path.mkdir()
+            va_vt_path.mkdir(parents=True)
 
         print(f"{Sprinkles.OKCYAN}🚚 Transporting to {va_vt_path} ...{Sprinkles.END}")
 
