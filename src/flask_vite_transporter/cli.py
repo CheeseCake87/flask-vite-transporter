@@ -29,11 +29,33 @@ def cli() -> None:
         "--version",
         "-m",
         "--mode",
+        "-o",
+        "--only",
     ]
     arg_list = sys.argv[1:]
     mode = "production"
+    only = None
 
     for arg in arg_list:
+        if arg == "-o" or arg == "--only":
+            o_index = arg_list.index(arg)
+
+            if o_index == 0:
+                print("\n\r" f" {Sprinkles.FAIL}No action was provided before -o or --only flag.{Sprinkles.END}")
+                print_help()
+
+            after_o = arg_list[o_index:]
+
+            try:
+                only = after_o[1]
+            except IndexError:
+                print(
+                    "\n\r"
+                    f" {Sprinkles.FAIL}No app was provided after -m or --mode flag.{Sprinkles.END}"
+                )
+                print_help()
+                sys.exit(0)
+
         if arg == "-m" or arg == "--mode":
             m_index = arg_list.index(arg)
             after_m = arg_list[m_index:]
@@ -51,13 +73,16 @@ def cli() -> None:
         if arg == mode:
             continue
 
+        if arg == only:
+            continue
+
         if arg not in available_commands:
             print("\n\r" f" {Sprinkles.FAIL}Invalid argument > {arg} <{Sprinkles.END}")
             print_help()
             sys.exit(1)
 
     with PyProjectConfig() as pyproject_config:
-        vite_apps_found = load_vite_apps(pyproject_config)
+        vite_apps_found = load_vite_apps(pyproject_config, only)
 
         if "update" in arg_list:
             update_vite_apps(pyproject_config, vite_apps_found)
