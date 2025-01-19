@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "flask-vite-transporter"
-version = "1.0.0"
+version = "2.0.0"
 description = 'Transport Vite apps to Flask (or Quart).'
 authors = [{ name = "David Carmichael", email = "david@uilix.com" }]
 readme = "README.md"
@@ -30,7 +30,9 @@ vt = "flask_vite_transporter.cli:cli"
 npm_exec = "npm"
 npx_exec = "npx"
 serve_app = "app_flask"
-vite_apps = ["frontend"]
+vite_app.frontend = "frontends/frontend_1"
+vite_app.other_frontend = "frontends/frontend_2"
+
 
 [tool.pyqwe]
 flask_plus_vite = [
