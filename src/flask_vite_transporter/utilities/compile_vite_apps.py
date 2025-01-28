@@ -100,8 +100,6 @@ def transporter(
         va_dist = va_path / "dist"
         va_assets = va_dist / "assets"
 
-        print(app)
-
         va_vt_path = vt_dir / app.get("serve_app_path", "")
 
         if not va_vt_path.exists():
