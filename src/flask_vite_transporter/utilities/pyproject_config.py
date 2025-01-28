@@ -1,4 +1,3 @@
-import sys
 import typing as t
 from pathlib import Path
 from tomllib import loads  # type: ignore

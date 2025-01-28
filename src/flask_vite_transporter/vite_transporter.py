@@ -1,24 +1,20 @@
 import typing as t
 from pathlib import Path
 
-from flask import Flask, url_for, Response, Blueprint
+from flask import Flask, url_for, Response, send_from_directory
 from flask_vite_transporter.elements import BodyContent, ScriptTag, LinkTag
 from flask_vite_transporter.globals import HTTP_HEADERS
 from flask_vite_transporter.utilities import Sprinkles
 from markupsafe import Markup
 
 
-def _load_blueprint(app: Flask) -> None:
-    app.register_blueprint(
-        Blueprint(
-            "__vite__",
-            __name__,
-            url_prefix="/--vite--",
-            static_folder=f"{app.root_path}/vite",
-            static_url_path="/",
+def _load_static_route(app: Flask) -> None:
+    @app.get('/--vite--/<string:vite_app>/<path:filename>')
+    def __vite__(vite_app, filename: str) -> Response:
+        vite_assets = Path(app.root_path) / "vite" / vite_app
+        return send_from_directory(
+            directory=vite_assets, path=filename, as_attachment=False
         )
-    )
-
 
 class ViteTransporter:
     app: t.Optional[Flask]
@@ -67,7 +63,7 @@ class ViteTransporter:
             if folder.is_dir():
                 self.app.config["VTF_APPS"].update({folder.name: folder})
 
-        _load_blueprint(app)
+        _load_static_route(app)
         self._load_context_processor(app)
         self._load_cors_headers(app, self.cors_allowed_hosts)
 
@@ -86,7 +82,7 @@ class ViteTransporter:
                     tags.append(
                         ScriptTag(
                             src=url_for(
-                                "__vite__.static", filename=f"{vite_app}/{file.name}"
+                                "__vite__", vite_app=vite_app, filename=file.name
                             ),
                             type_="module",
                         )
@@ -97,7 +93,7 @@ class ViteTransporter:
                         LinkTag(
                             rel="stylesheet",
                             href=url_for(
-                                "__vite__.static", filename=f"{vite_app}/{file.name}"
+                                "__vite__", vite_app=vite_app, filename=file.name
                             ),
                         )
                     )

@@ -100,6 +100,8 @@ def transporter(
         va_dist = va_path / "dist"
         va_assets = va_dist / "assets"
 
+        print(app)
+
         va_vt_path = vt_dir / app.get("serve_app_path", "")
 
         if not va_vt_path.exists():
@@ -115,7 +117,7 @@ def transporter(
 
         if not va_dist.exists():
             print(
-                f"{Sprinkles.FAIL}No dist found for {app.get('vite_app')}{Sprinkles.END}"
+                f"{Sprinkles.FAIL}No dist found for {va_path.name}{Sprinkles.END}"
             )
             continue
 
@@ -128,13 +130,13 @@ def transporter(
                 with open(va_vt_path / item.name, "w") as f:
                     content = item.read_text()
                     f.write(
-                        content.replace("assets/", f"--vite--/{app.get('vite_app')}/")
+                        content.replace("assets/", f"--vite--/{app.get("serve_app_path", "")}/")
                     )
             elif item.suffix == ".css":
                 with open(va_vt_path / item.name, "w") as f:
                     content = item.read_text()
                     f.write(
-                        content.replace("assets/", f"--vite--/{app.get('vite_app')}/")
+                        content.replace("assets/", f"--vite--/{app.get("serve_app_path", "")}/")
                     )
             else:
                 shutil.copy(item, va_vt_path / item.name)
