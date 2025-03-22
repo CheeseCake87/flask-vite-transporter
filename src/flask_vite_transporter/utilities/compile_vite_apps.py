@@ -128,13 +128,13 @@ def transporter(
                 with open(va_vt_path / item.name, "w") as f:
                     content = item.read_text()
                     f.write(
-                        content.replace("assets/", f"--vite--/{app.get("serve_app_path", "")}/")
+                        content.replace("assets/", f"--vite--/{app.get('serve_app_path', '')}/")
                     )
             elif item.suffix == ".css":
                 with open(va_vt_path / item.name, "w") as f:
                     content = item.read_text()
                     f.write(
-                        content.replace("assets/", f"--vite--/{app.get("serve_app_path", "")}/")
+                        content.replace("assets/", f"--vite--/{app.get('serve_app_path', '')}/")
                     )
             else:
                 shutil.copy(item, va_vt_path / item.name)
