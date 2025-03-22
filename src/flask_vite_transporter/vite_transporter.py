@@ -9,12 +9,13 @@ from markupsafe import Markup
 
 
 def _load_static_route(app: Flask) -> None:
-    @app.get('/--vite--/<string:vite_app>/<path:filename>')
+    @app.get("/--vite--/<string:vite_app>/<path:filename>")
     def __vite__(vite_app: str, filename: str) -> Response:
         vite_assets = Path(app.root_path) / "vite" / vite_app
         return send_from_directory(
             directory=vite_assets, path=filename, as_attachment=False
         )
+
 
 class ViteTransporter:
     app: t.Optional[Flask]

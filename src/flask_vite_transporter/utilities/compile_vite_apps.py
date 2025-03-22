@@ -114,9 +114,7 @@ def transporter(
         print(f"{Sprinkles.OKCYAN}🚚 Transporting to {va_vt_path} ...{Sprinkles.END}")
 
         if not va_dist.exists():
-            print(
-                f"{Sprinkles.FAIL}No dist found for {va_path.name}{Sprinkles.END}"
-            )
+            print(f"{Sprinkles.FAIL}No dist found for {va_path.name}{Sprinkles.END}")
             continue
 
         for item in va_assets.iterdir():
@@ -128,13 +126,17 @@ def transporter(
                 with open(va_vt_path / item.name, "w") as f:
                     content = item.read_text()
                     f.write(
-                        content.replace("assets/", f"--vite--/{app.get('serve_app_path', '')}/")
+                        content.replace(
+                            "assets/", f"--vite--/{app.get('serve_app_path', '')}/"
+                        )
                     )
             elif item.suffix == ".css":
                 with open(va_vt_path / item.name, "w") as f:
                     content = item.read_text()
                     f.write(
-                        content.replace("assets/", f"--vite--/{app.get('serve_app_path', '')}/")
+                        content.replace(
+                            "assets/", f"--vite--/{app.get('serve_app_path', '')}/"
+                        )
                     )
             else:
                 shutil.copy(item, va_vt_path / item.name)
