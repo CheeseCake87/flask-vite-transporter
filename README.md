@@ -6,21 +6,30 @@ Transport Vite apps to Flask (or Quart)
 pip install flask-vite-transporter
 ```
 
-**Note (Flask/Quart):** When including credentials in fetch requests in the vite app.
-You must visit the serve app first to set the credentials.
-
-For example, if the serve app is running on `http://127.0.0.1:5001`, you must visit this address first.
-
-This won't be needed in production, as it's expected that the Vite app will be served from the same domain.
+<!-- TOC -->
+* [flask-vite-transporter 🚚](#flask-vite-transporter-)
+  * [How it works](#how-it-works)
+    * [The pyproject.toml file](#the-pyprojecttoml-file)
+    * [List the Vite apps](#list-the-vite-apps)
+    * [Compiling the Vite apps](#compiling-the-vite-apps)
+    * [Transporting the Vite apps](#transporting-the-vite-apps)
+    * [What happens](#what-happens)
+    * [Modes (--mode)](#modes---mode)
+    * [Only (--only)](#only---only)
+  * [Working with vite-transporter using Flask / Quart](#working-with-vite-transporter-using-flask--quart)
+    * [The context processors](#the-context-processors)
+    * [Flask Example](#flask-example)
+    * [Quart Example](#quart-example)
+    * [CORS](#cors)
+  * [Running the demos](#running-the-demos)
+  * [Things to note](#things-to-note)
+<!-- TOC -->
 
 ## How it works
 
 ### The pyproject.toml file
 
 The pyproject.toml file is used to store what Vite apps are available.
-
-Adding the following to the pyproject.toml file will transfer all the Vite
-apps listed in the `vite_app_dirs` list to the serving app listed in the `serve_app` key.
 
 `pyproject.toml`:
 
@@ -40,13 +49,24 @@ have the `node_modules` folder.
 
 `npx` is used to run the Vite app build command.
 
-`serve_app` is the app that will serve the Vite compiled files.
+`serve_app` is the Flask or Quart app package that will serve the Vite
+compiled files. For now this extension only works with the app package setup:
 
-`vite_app.<reference>` is vite_app.'reference in the flask app' = 'relative 
+```text
+app_flask/
+├── static
+├── templates
+└── __init__.py
+```
+
+`vite_app.<reference>` is vite_app.'reference in the flask app' = 'relative
 folder of the vite app'
 
-You can send over multiple Vite apps to the serving app, they will be
+You can send over multiple Vite apps to the serving app, and they will be
 accessible within template files using the reference value.
+
+See [Working with vite-transporter using Flask / Quart](#working-with-vite-transporter-using-flask--quart)
+for more information about how to use references.
 
 ```toml
 [tool.flask_vite_transporter]
@@ -73,7 +93,8 @@ It will show: `<reference>: <vite app source> => <serve app location>`
 vt pack
 ```
 
-This will create a `dist` folder in each Vite app directory with the compiled files.
+This will create a
+`dist` folder in each Vite app directory with the compiled files.
 
 ### Transporting the Vite apps
 
@@ -97,12 +118,14 @@ in this folder are then moved to a folder called `vite` in the serving app.
 Any js file that is compiled that contains an asset reference will
 replace `assets/` with `/--vite--/{reference}`.
 
-This requires that all assets in the Vite app stay in the `assets` folder, and are imported in the
+This requires that all assets in the Vite app stay in the
+`assets` folder, and are imported in the
 frontend project in a way that the Vite compile stage can find them.
 
-### Modes
+### Modes (--mode)
 
-The Vite apps can be compiled in different modes:
+The Vite apps can be compiled in different modes by using the `-m` or `--mode`
+flag:
 
 ```bash
 vt pack -m development
@@ -115,14 +138,17 @@ An example of `pack` and `transport` together:
 ```bash
 vt pack -m dev transport
 # or
-vt pack transport -m dev
+vt pack transport -mode dev
 ```
 
 These mode values are accessible via `import.meta.env.MODE` in the Vite app.
 
-### Only
+See [Vite: Env Variables and Modes](https://vite.dev/guide/env-and-mode) to
+find out more about Vite modes.
 
-If you have multiple frontends and only want to pack and transport one you 
+### Only (--only)
+
+If you have multiple frontends and only want to pack and transport one you
 can use the `-o` or `--only` flag to do that.
 
 Here's an example:
@@ -140,7 +166,7 @@ vite_app.admin_portal = "frontends/admin"
 
 ## Working with vite-transporter using Flask / Quart
 
-flask-vite-transporter creates a couple of Flask / Quart context processors 
+flask-vite-transporter creates a couple of Flask / Quart context processors
 that match the Vite apps to a Flask / Quart template.
 
 ### The context processors
@@ -224,7 +250,8 @@ This is to allow the Vite app to communicate with the app.
 
 ## Running the demos
 
-We will be using a package call `pyqwe` to run commands from the pyproject file.
+We will be using a package call
+`pyqwe` to run commands from the pyproject file.
 Installing the development requirements will install `pyqwe`:
 
 ```bash
@@ -237,15 +264,15 @@ Use `pyqwe` to install the local version of flask-vite-transporter:
 pyqwe install
 ```
 
-The `serve_app` under `tool.flask_vite_transporter` is currently set to use 
+The `serve_app` under `tool.flask_vite_transporter` is currently set to use
 the Flask demo app.
 
 ```bash
 pyqwe flask_plus_vite
 ```
 
-You should be able to visit the Flask app and the Vite app from the link in 
-the terminal. Change something in the Vite app, save, then in a separate 
+You should be able to visit the Flask app and the Vite app from the link in
+the terminal. Change something in the Vite app, save, then in a separate
 terminal run:
 
 ```bash
@@ -254,3 +281,14 @@ vt pack transport
 
 The Vite app will be compiled, and the files will be moved to the Flask app.
 Visiting the Flask app from the link in the terminal should show the changes.
+
+## Things to note
+
+When including credentials in fetch requests in the vite app.
+You must visit the serve app first to set the credentials.
+
+For example, if the serve app is running on `http://127.0.0.1:5001`,
+you must visit this address first.
+
+This won't be needed in production, as it's expected that the Vite
+app will be served from the same domain.
