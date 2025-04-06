@@ -132,6 +132,6 @@ class ViteTransporter:
                 response.headers["Access-Control-Allow-Headers"] = ", ".join(
                     HTTP_HEADERS
                 )
-                response.headers["Access-Control-Allow-Methods"] = "*"
+                response.headers["Access-Control-Allow-Methods"] = "GET, HEAD, POST, PUT, DELETE, OPTIONS"
                 response.headers["Access-Control-Allow-Credentials"] = "true"
                 return response
