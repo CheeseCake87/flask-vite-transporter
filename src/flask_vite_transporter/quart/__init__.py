@@ -18,17 +18,22 @@ class QuartViteTransporter:
     vt_root_path: Path
 
     cors_allowed_hosts: t.Optional[t.List[str]]
+    static_url_path: str
 
     def __init__(
         self,
         app: t.Optional[Quart] = None,
         cors_allowed_hosts: t.Optional[t.List[str]] = None,
+        static_url_path: str = "/--vite--",
     ) -> None:
         if app is not None:
-            self.init_app(app, cors_allowed_hosts)
+            self.init_app(app, cors_allowed_hosts, static_url_path)
 
     def init_app(
-        self, app: Quart, cors_allowed_hosts: t.Optional[t.List[str]] = None
+        self,
+        app: Quart,
+        cors_allowed_hosts: t.Optional[t.List[str]] = None,
+        static_url_path: str = "/--vite--",
     ) -> None:
         if app is None:
             raise ImportError("No app was passed in.")
@@ -37,6 +42,7 @@ class QuartViteTransporter:
 
         self.app = app
         self.cors_allowed_hosts = cors_allowed_hosts
+        self.static_url_path = static_url_path
 
         if "vite_transporter" in self.app.extensions:
             raise ImportError(
@@ -67,7 +73,7 @@ class QuartViteTransporter:
             Blueprint(
                 "__vite__",
                 __name__,
-                url_prefix="/--vite--",
+                url_prefix=f"/{self.static_url_path}",
                 static_folder=f"{app.root_path}/vite",
                 static_url_path="/",
             )

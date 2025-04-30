@@ -21,6 +21,7 @@ pip install flask-vite-transporter
     * [Flask Example](#flask-example)
     * [Quart Example](#quart-example)
     * [CORS](#cors)
+    * [Update the Static URL Path](#update-the-static-url-path)
   * [Running the demos](#running-the-demos)
   * [Things to note](#things-to-note)
 <!-- TOC -->
@@ -245,6 +246,18 @@ ViteTransporter(app, cors_allowed_hosts=["http://127.0.0.1:5003"])
 ```
 
 This is to allow the Vite app to communicate with the app.
+
+### Update the Static URL Path
+
+```python
+ViteTransporter(
+  app, 
+  cors_allowed_hosts=["http://127.0.0.1:5003"],
+  static_url_path="/nested/system/--vite--"
+)
+```
+
+This is used if you're using nested systems.
 
 **Note:** It's recommended to remove this in production.
 

@@ -8,8 +8,8 @@ from flask_vite_transporter.utilities import Sprinkles
 from markupsafe import Markup
 
 
-def _load_static_route(app: Flask) -> None:
-    @app.get("/--vite--/<string:vite_app>/<path:filename>")
+def _load_static_route(app: Flask, static_url_path: str) -> None:
+    @app.get(f"{static_url_path}/<string:vite_app>/<path:filename>")
     def __vite__(vite_app: str, filename: str) -> Response:
         vite_assets = Path(app.root_path) / "vite" / vite_app
         return send_from_directory(
@@ -23,16 +23,22 @@ class ViteTransporter:
 
     cors_allowed_hosts: t.Optional[t.List[str]]
 
+    static_url_path: str
+
     def __init__(
         self,
         app: t.Optional[Flask] = None,
         cors_allowed_hosts: t.Optional[t.List[str]] = None,
+        static_url_path: str = "/--vite--",
     ) -> None:
         if app is not None:
-            self.init_app(app, cors_allowed_hosts)
+            self.init_app(app, cors_allowed_hosts, static_url_path)
 
     def init_app(
-        self, app: Flask, cors_allowed_hosts: t.Optional[t.List[str]] = None
+        self,
+        app: Flask,
+        cors_allowed_hosts: t.Optional[t.List[str]] = None,
+        static_url_path: str = "/--vite--",
     ) -> None:
         if app is None:
             raise ImportError("No app was passed in.")
@@ -41,6 +47,7 @@ class ViteTransporter:
 
         self.app = app
         self.cors_allowed_hosts = cors_allowed_hosts
+        self.static_url_path = static_url_path
 
         if "vite_transporter" in self.app.extensions:
             raise ImportError(
@@ -132,6 +139,8 @@ class ViteTransporter:
                 response.headers["Access-Control-Allow-Headers"] = ", ".join(
                     HTTP_HEADERS
                 )
-                response.headers["Access-Control-Allow-Methods"] = "GET, HEAD, POST, PUT, DELETE, OPTIONS"
+                response.headers["Access-Control-Allow-Methods"] = (
+                    "GET, HEAD, POST, PUT, DELETE, OPTIONS"
+                )
                 response.headers["Access-Control-Allow-Credentials"] = "true"
                 return response
