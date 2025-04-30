@@ -21,6 +21,8 @@ def print_help() -> None:
         "\n\r"
         f" {Sprinkles.OKCYAN}-m, --mode{Sprinkles.END} => Set the Vite import.meta.env.MODE, defaults to production"
         "\n\r"
+        f" {Sprinkles.OKCYAN}-sup, --static-url_path{Sprinkles.END} => Set the static url path to compile to, defaults to /--vite--"
+        "\n\r"
         f" {Sprinkles.OKCYAN}-h, --help, help{Sprinkles.END} => Show the help message and exit"
         "\n\r"
         f" {Sprinkles.OKCYAN}-v, --version, version{Sprinkles.END} => Show the version and exit"

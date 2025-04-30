@@ -6,9 +6,15 @@ from .pyproject_config import PyProjectConfig
 from .sprinkles import Sprinkles
 
 
+def strip_front_slash(path: str) -> str:
+    if path.startswith("/"):
+        return path[1:]
+    return path
+
+
 def update_vite_apps(
-    pyproject_config: PyProjectConfig,
-    vite_apps_found: t.List[t.Dict[str, t.Any]],
+        pyproject_config: PyProjectConfig,
+        vite_apps_found: t.List[t.Dict[str, t.Any]],
 ) -> None:
     updater(
         pyproject_config,
@@ -17,26 +23,28 @@ def update_vite_apps(
 
 
 def pack_vite_apps(
-    pyproject_config: PyProjectConfig,
-    vite_apps_found: t.List[t.Dict[str, t.Any]],
-    mode: str = "production",
+        pyproject_config: PyProjectConfig,
+        vite_apps_found: t.List[t.Dict[str, t.Any]],
+        mode: str = "production",
 ) -> None:
     packer(pyproject_config, vite_apps_found, mode=mode)
 
 
 def transport_vite_apps(
-    pyproject_config: PyProjectConfig,
-    vite_apps_found: t.List[t.Dict[str, t.Any]],
+        pyproject_config: PyProjectConfig,
+        vite_apps_found: t.List[t.Dict[str, t.Any]],
+        static_url_path: str = "/--vite--",
 ) -> None:
     transporter(
         pyproject_config,
         vite_apps_found,
+        static_url_path
     )
 
 
 def updater(
-    pyproject_config: PyProjectConfig,
-    vite_apps_found: t.List[t.Dict[str, t.Any]],
+        pyproject_config: PyProjectConfig,
+        vite_apps_found: t.List[t.Dict[str, t.Any]],
 ) -> None:
     for app in vite_apps_found:
         va_path = pyproject_config.cwd / app.get("vite_app", "")
@@ -59,9 +67,9 @@ def updater(
 
 
 def packer(
-    pyproject_config: PyProjectConfig,
-    vite_apps_found: t.List[t.Dict[str, t.Any]],
-    mode: str = "production",
+        pyproject_config: PyProjectConfig,
+        vite_apps_found: t.List[t.Dict[str, t.Any]],
+        mode: str = "production",
 ) -> None:
     for app in vite_apps_found:
         va_path = pyproject_config.cwd / app.get("vite_app", "")
@@ -87,8 +95,9 @@ def packer(
 
 
 def transporter(
-    pyproject_config: PyProjectConfig,
-    vite_apps_found: t.List[t.Dict[str, t.Any]],
+        pyproject_config: PyProjectConfig,
+        vite_apps_found: t.List[t.Dict[str, t.Any]],
+        static_url_path: str = "/--vite--"
 ) -> None:
     vt_dir = pyproject_config.cwd / pyproject_config.serve_app / "vite"
 
@@ -127,7 +136,7 @@ def transporter(
                     content = item.read_text()
                     f.write(
                         content.replace(
-                            "assets/", f"--vite--/{app.get('serve_app_path', '')}/"
+                            "assets/", f"{strip_front_slash(static_url_path)}/{app.get('serve_app_path', '')}/"
                         )
                     )
             elif item.suffix == ".css":
@@ -135,7 +144,7 @@ def transporter(
                     content = item.read_text()
                     f.write(
                         content.replace(
-                            "assets/", f"--vite--/{app.get('serve_app_path', '')}/"
+                            "assets/", f"{strip_front_slash(static_url_path)}/{app.get('serve_app_path', '')}/"
                         )
                     )
             else:

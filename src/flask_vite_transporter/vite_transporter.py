@@ -71,7 +71,7 @@ class ViteTransporter:
             if folder.is_dir():
                 self.app.config["VTF_APPS"].update({folder.name: folder})
 
-        _load_static_route(app)
+        _load_static_route(app, static_url_path)
         self._load_context_processor(app)
         self._load_cors_headers(app, self.cors_allowed_hosts)
 

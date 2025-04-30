@@ -29,14 +29,22 @@ def cli() -> None:
         "--version",
         "-m",
         "--mode",
+        "-sup",
+        "--static-url-path",
         "-o",
         "--only",
     ]
     arg_list = sys.argv[1:]
     mode = "production"
+    static_url_path = "/--vite--"
     only = None
 
+    skip_index = []
+
     for arg in arg_list:
+        if arg_list.index(arg) in skip_index:
+            continue
+
         if arg == "-o" or arg == "--only":
             o_index = arg_list.index(arg)
 
@@ -73,6 +81,21 @@ def cli() -> None:
                 print_help()
                 sys.exit(0)
 
+        if arg == "-sup" or arg == "--static-url-path":
+            sup_index = arg_list.index(arg)
+            after_sup = arg_list[sup_index:]
+
+            try:
+                static_url_path = after_sup[1]
+                skip_index.append(sup_index + 1)
+            except IndexError:
+                print(
+                    "\n\r"
+                    f" {Sprinkles.FAIL}No URL path was provided after -sup or --static-url-path flag.{Sprinkles.END}"
+                )
+                print_help()
+                sys.exit(0)
+
         if arg == mode:
             continue
 
@@ -100,7 +123,7 @@ def cli() -> None:
                 sys.exit(0)
 
         if "transport" in arg_list:
-            transport_vite_apps(pyproject_config, vite_apps_found)
+            transport_vite_apps(pyproject_config, vite_apps_found, static_url_path)
             sys.exit(0)
 
         if "list" in arg_list or "ls" in arg_list:

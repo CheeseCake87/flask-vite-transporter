@@ -257,6 +257,10 @@ ViteTransporter(
 )
 ```
 
+```bash
+vt pack transport -sup /nested/system/--vite--
+```
+
 This is used if you're using nested systems.
 
 **Note:** It's recommended to remove this in production.
