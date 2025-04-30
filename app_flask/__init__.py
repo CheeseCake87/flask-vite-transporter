@@ -9,7 +9,7 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     app.secret_key = "flask_secret"
-    ViteTransporter(app, cors_allowed_hosts=["http://127.0.0.1:5003"])
+    ViteTransporter(app, cors_allowed_hosts=["http://127.0.0.1:5003"], static_url_path="/nested/--vite--")
 
     @app.route("/")
     def index():
