@@ -16,12 +16,7 @@ class BodyContent:
         self.noscript_message = noscript_message
 
     def __repr__(self) -> str:
-        return (
-            "BodyContent< "
-            f"id = {self.div_id} "
-            f"noscript = {self.noscript_message} "
-            ">"
-        )
+        return f"BodyContent< id = {self.div_id} noscript = {self.noscript_message} >"
 
     def __str__(self) -> Markup:
         return Markup(self._compile())

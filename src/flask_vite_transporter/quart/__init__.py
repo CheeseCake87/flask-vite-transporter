@@ -8,7 +8,7 @@ from flask_vite_transporter.utilities import Sprinkles
 
 if "quart" in sys.modules:
     from markupsafe import Markup
-    from quart import Quart, url_for, Response, Blueprint
+    from quart import Quart, url_for, Response, Blueprint, request
 else:
     raise ImportError("Quart is not installed.")
 
@@ -141,12 +141,15 @@ class QuartViteTransporter:
 
             @app.after_request
             async def after_request(response: Response) -> Response:
-                response.headers["Access-Control-Allow-Origin"] = ", ".join(
-                    cors_allowed_hosts
-                )
-                response.headers["Access-Control-Allow-Headers"] = ", ".join(
-                    HTTP_HEADERS
-                )
-                response.headers["Access-Control-Allow-Methods"] = "*"
-                response.headers["Access-Control-Allow-Credentials"] = "true"
+                origin = request.origin
+
+                if origin in cors_allowed_hosts:
+                    response.headers["Access-Control-Allow-Origin"] = origin
+                    response.headers["Access-Control-Allow-Headers"] = ", ".join(
+                        HTTP_HEADERS
+                    )
+                    response.headers["Access-Control-Allow-Methods"] = (
+                        "GET, HEAD, POST, PUT, DELETE, OPTIONS"
+                    )
+                    response.headers["Access-Control-Allow-Credentials"] = "true"
                 return response

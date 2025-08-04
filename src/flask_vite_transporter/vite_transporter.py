@@ -1,11 +1,12 @@
 import typing as t
 from pathlib import Path
 
-from flask import Flask, url_for, Response, send_from_directory
+from flask import Flask, url_for, Response, send_from_directory, request
+from markupsafe import Markup
+
 from flask_vite_transporter.elements import BodyContent, ScriptTag, LinkTag
 from flask_vite_transporter.globals import HTTP_HEADERS
 from flask_vite_transporter.utilities import Sprinkles
-from markupsafe import Markup
 
 
 def _load_static_route(app: Flask, static_url_path: str) -> None:
@@ -133,14 +134,16 @@ class ViteTransporter:
 
             @app.after_request
             def after_request(response: Response) -> Response:
-                response.headers["Access-Control-Allow-Origin"] = ", ".join(
-                    cors_allowed_hosts
-                )
-                response.headers["Access-Control-Allow-Headers"] = ", ".join(
-                    HTTP_HEADERS
-                )
-                response.headers["Access-Control-Allow-Methods"] = (
-                    "GET, HEAD, POST, PUT, DELETE, OPTIONS"
-                )
-                response.headers["Access-Control-Allow-Credentials"] = "true"
+                origin = request.origin
+
+                if origin in cors_allowed_hosts:
+                    response.headers["Access-Control-Allow-Origin"] = origin
+                    response.headers["Access-Control-Allow-Headers"] = ", ".join(
+                        HTTP_HEADERS
+                    )
+                    response.headers["Access-Control-Allow-Methods"] = (
+                        "GET, HEAD, POST, PUT, DELETE, OPTIONS"
+                    )
+                    response.headers["Access-Control-Allow-Credentials"] = "true"
+
                 return response

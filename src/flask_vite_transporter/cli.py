@@ -103,7 +103,7 @@ def cli() -> None:
             continue
 
         if arg not in available_commands:
-            print("\n\r" f" {Sprinkles.FAIL}Invalid argument > {arg} <{Sprinkles.END}")
+            print(f"\n\r {Sprinkles.FAIL}Invalid argument > {arg} <{Sprinkles.END}")
             print_help()
             sys.exit(1)
 
